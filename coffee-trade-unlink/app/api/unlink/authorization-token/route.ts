@@ -2,7 +2,7 @@ import { createUnlinkAdmin, createUnlinkAuthRoutes } from '@unlink-xyz/sdk/admin
 import { NextRequest } from 'next/server';
 
 const admin = createUnlinkAdmin({
-  environment: 'base-sepolia',
+  environment: 'ethereum-sepolia',
   apiKey: process.env.UNLINK_API_KEY!,
 });
 

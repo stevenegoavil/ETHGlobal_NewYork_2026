@@ -10,8 +10,8 @@ declare global {
   }
 }
 
-const SELLER_UNLINK_ADDRESS = 'unlink1seller000000000000000000000000000000';
-const USDC_TOKEN = '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238'; // Sepolia USDC
+const SELLER_UNLINK_ADDRESS = 'unlink1qqfy4lav3t0f9uk5z7t6vjn2qrtyfm6gfncxu4tv3d3s56ns2vzelmtjwce7f99ynjc4a8wunafpeuv4ueh0z39au8k6d806h853x9rjcfzc8j';
+const USDC_TOKEN = '0xd9e515b65caa28f99581632d0cf78d62e7d3a2fd'; // Sepolia USDC
 
 export default function Home() {
   const { primaryWallet, user } = useDynamicContext();
@@ -30,8 +30,8 @@ export default function Home() {
       const client = await getUnlinkClient(window.ethereum, primaryWallet.address);
       const { balances } = await client.getBalances();
       const usdc = balances.find((b: any) => b.token === USDC_TOKEN);
-      setBalance(usdc ? (Number(usdc.amount) / 1e6).toFixed(2) : '0.00');
-      setUnlinkAddress(client.address ?? null);
+      setBalance(usdc ? (Number(usdc.amount) / 1e18).toFixed(2) : '0.00');
+      setUnlinkAddress(client.address ?? primaryWallet.address);
       setStatus('Private account ready.');
     } catch (e: any) {
       setStatus(`Error: ${e.message}`);
@@ -55,7 +55,7 @@ export default function Home() {
       setStatus(`✅ Private purchase of ${coffeeName} complete. Transaction unlinked on-chain.`);
       const { balances } = await client.getBalances();
       const usdc = balances.find((b: any) => b.token === USDC_TOKEN);
-      setBalance(usdc ? (Number(usdc.amount) / 1e6).toFixed(2) : '0.00');
+      setBalance(usdc ? (Number(usdc.amount) / 1e18).toFixed(2) : '0.00');
     } catch (e: any) {
       setStatus(`Error: ${e.message}`);
     } finally {
@@ -80,22 +80,52 @@ export default function Home() {
       {/* Status bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
         <div className="bg-white border border-stone-200 rounded-xl p-4 shadow-sm text-sm flex flex-wrap gap-4 items-center justify-between">
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 text-stone-800">
             <span><span className="font-semibold">Wallet:</span> {isConnected ? `${primaryWallet.address.slice(0,6)}...${primaryWallet.address.slice(-4)}` : 'Not connected'}</span>
             <span><span className="font-semibold">Privacy:</span> <span className="text-amber-700 font-semibold">Unlink SDK</span></span>
             <span><span className="font-semibold">Network:</span> Base Sepolia</span>
             {unlinkAddress && <span><span className="font-semibold">Unlink:</span> {unlinkAddress.slice(0,12)}...</span>}
             {balance && <span><span className="font-semibold">Private USDC:</span> {balance}</span>}
           </div>
-          {isConnected && !unlinkAddress && (
-            <button
-              onClick={initUnlink}
-              disabled={loading}
-              className="bg-amber-700 hover:bg-amber-800 disabled:bg-stone-300 text-white font-semibold px-4 py-2 rounded-lg text-sm"
-            >
-              {loading ? 'Initializing...' : 'Initialize Private Account'}
-            </button>
-          )}
+        {isConnected && !unlinkAddress && (
+          <button
+            onClick={initUnlink}
+            disabled={loading}
+            className="bg-amber-700 hover:bg-amber-800 disabled:bg-stone-300 text-white font-semibold px-4 py-2 rounded-lg text-sm"
+          >
+            {loading ? 'Initializing...' : 'Initialize Private Account'}
+          </button>
+        )}
+        {isConnected && unlinkAddress && (
+          <button
+            onClick={async () => {
+              try {
+                setLoading(true);
+                setStatus('Depositing USDC into private account...');
+                const client = await getUnlinkClient(window.ethereum, primaryWallet.address);
+                const me = client.me();
+                const tx = await me.depositWithApproval({
+                  token: USDC_TOKEN,
+                  amount: '5000000',
+                  evm: window.ethereum,
+                });
+                await tx.wait();
+                const { balances } = await me.getBalances();
+                const usdc = balances.find((b: any) => b.token === USDC_TOKEN);
+                setBalance(usdc ? (Number(usdc.amount) / 1e18).toFixed(2) : '0.00');
+                setStatus('✅ 5 USDC deposited privately!');
+              } catch (e: any) {
+                setStatus(`Deposit error: ${e.message}`);
+              } finally {
+                setLoading(false);
+              }
+            }}
+            disabled={loading}
+            className="bg-stone-700 hover:bg-stone-800 disabled:bg-stone-300 text-white font-semibold px-4 py-2 rounded-lg text-sm"
+          >
+            Deposit 5 USDC
+          </button>
+        )}
         </div>
       </div>
 
