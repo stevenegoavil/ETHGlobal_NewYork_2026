@@ -87,45 +87,16 @@ export default function Home() {
             {unlinkAddress && <span><span className="font-semibold">Unlink:</span> {unlinkAddress.slice(0,12)}...</span>}
             {balance && <span><span className="font-semibold">Private USDC:</span> {balance}</span>}
           </div>
-        {isConnected && !unlinkAddress && (
-          <button
-            onClick={initUnlink}
-            disabled={loading}
-            className="bg-amber-700 hover:bg-amber-800 disabled:bg-stone-300 text-white font-semibold px-4 py-2 rounded-lg text-sm"
-          >
-            {loading ? 'Initializing...' : 'Initialize Private Account'}
-          </button>
-        )}
-        {isConnected && unlinkAddress && (
-          <button
-            onClick={async () => {
-              try {
-                setLoading(true);
-                setStatus('Depositing USDC into private account...');
-                const client = await getUnlinkClient(window.ethereum, primaryWallet.address);
-                const me = client.me();
-                const tx = await me.depositWithApproval({
-                  token: USDC_TOKEN,
-                  amount: '5000000',
-                  evm: window.ethereum,
-                });
-                await tx.wait();
-                const { balances } = await me.getBalances();
-                const usdc = balances.find((b: any) => b.token === USDC_TOKEN);
-                setBalance(usdc ? (Number(usdc.amount) / 1e18).toFixed(2) : '0.00');
-                setStatus('✅ 5 USDC deposited privately!');
-              } catch (e: any) {
-                setStatus(`Deposit error: ${e.message}`);
-              } finally {
-                setLoading(false);
-              }
-            }}
-            disabled={loading}
-            className="bg-stone-700 hover:bg-stone-800 disabled:bg-stone-300 text-white font-semibold px-4 py-2 rounded-lg text-sm"
-          >
-            Deposit 5 USDC
-          </button>
-        )}
+
+      {isConnected && !unlinkAddress && (
+        <button
+          onClick={initUnlink}
+          disabled={loading}
+          className="bg-amber-700 hover:bg-amber-800 disabled:bg-stone-300 text-white font-semibold px-4 py-2 rounded-lg text-sm"
+        >
+          {loading ? 'Initializing...' : 'Initialize Private Account'}
+        </button>
+      )}
         </div>
       </div>
 

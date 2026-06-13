@@ -1,13 +1,15 @@
 'use client';
 
-import { account, createUnlinkClient } from '@unlink-xyz/sdk/browser';
+import { account, createUnlinkClient, evm } from '@unlink-xyz/sdk/browser';
 
 let clientInstance: any = null;
-let storedProvider: any = null;
 
 export async function getUnlinkClient(provider: any, userId: string) {
-  storedProvider = provider;
   if (clientInstance) return clientInstance;
+
+  await provider.request({ method: 'eth_requestAccounts' });
+
+  const evmProvider = evm.fromEip1193({ provider });
 
   const { account: unlinkAccount } = await account.fromMetaMask({
     provider,
@@ -19,15 +21,13 @@ export async function getUnlinkClient(provider: any, userId: string) {
     environment: 'ethereum-sepolia',
     account: unlinkAccount,
     userId,
-    evmProvider: provider,
+    evm: evmProvider,
   });
 
   await clientInstance.ensureRegistered();
-  console.log('Unlink client methods:', Object.keys(clientInstance));
   return clientInstance;
 }
 
 export function resetUnlinkClient() {
   clientInstance = null;
-  storedProvider = null;
 }
