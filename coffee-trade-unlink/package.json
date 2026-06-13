@@ -10,14 +10,17 @@
     "yellow:auth": "tsx app/lib/connect_yellow.ts"
   },
   "dependencies": {
+    "@dynamic-labs/ethereum": "^4.88.6",
+    "@dynamic-labs/sdk-react-core": "^4.88.6",
     "@erc7824/nitrolite": "^0.5.3",
     "@rainbow-me/rainbowkit": "^2.2.10",
-    "@tanstack/react-query": "^5.90.20",
+    "@tanstack/react-query": "^5.101.0",
+    "@unlink-xyz/sdk": "^0.3.0-canary.598",
     "dotenv": "^17.2.4",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "viem": "^2.45.1",
+    "viem": "^2.52.2",
     "wagmi": "^2.19.5",
     "yellow-ts": "^0.0.10"
   },
