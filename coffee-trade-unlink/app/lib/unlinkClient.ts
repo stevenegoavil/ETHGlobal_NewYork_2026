@@ -10,11 +10,11 @@ export async function getUnlinkClient(provider: any, userId: string) {
   const { account: unlinkAccount } = await account.fromMetaMask({
     provider,
     appId: '3d947bc7-9ad8-475b-a20e-611e72355f5d',
-    chainId: 84532,
+    chainId: 11155111,
   });
 
   clientInstance = createUnlinkClient({
-    environment: 'base-sepolia',
+    environment: 'ethereum-sepolia',
     account: unlinkAccount,
     userId,
   });

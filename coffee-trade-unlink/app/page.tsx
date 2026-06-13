@@ -11,7 +11,7 @@ declare global {
 }
 
 const SELLER_UNLINK_ADDRESS = 'unlink1seller000000000000000000000000000000';
-const USDC_TOKEN = '0x036CbD53842c5426634e7929541eC2318f3dCF7e'; // Base Sepolia USDC
+const USDC_TOKEN = '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238'; // Sepolia USDC
 
 export default function Home() {
   const { primaryWallet, user } = useDynamicContext();
