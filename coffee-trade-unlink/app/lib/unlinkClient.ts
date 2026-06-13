@@ -1,0 +1,28 @@
+'use client';
+
+import { account, createUnlinkClient } from '@unlink-xyz/sdk/browser';
+
+let clientInstance: any = null;
+
+export async function getUnlinkClient(provider: any, userId: string) {
+  if (clientInstance) return clientInstance;
+
+  const { account: unlinkAccount } = await account.fromMetaMask({
+    provider,
+    appId: '3d947bc7-9ad8-475b-a20e-611e72355f5d',
+    chainId: 84532,
+  });
+
+  clientInstance = createUnlinkClient({
+    environment: 'base-sepolia',
+    account: unlinkAccount,
+    userId,
+  });
+
+  await clientInstance.ensureRegistered();
+  return clientInstance;
+}
+
+export function resetUnlinkClient() {
+  clientInstance = null;
+}
