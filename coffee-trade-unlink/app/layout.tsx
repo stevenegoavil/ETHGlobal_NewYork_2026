@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
       </body>
     </html>
