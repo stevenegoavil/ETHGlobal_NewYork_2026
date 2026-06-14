@@ -4,11 +4,7 @@ import { useState } from 'react';
 import { DynamicWidget, useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { getUnlinkClient } from './lib/unlinkClient';
 
-declare global {
-  interface Window {
-    ethereum: any;
-  }
-}
+
 
 const SELLER_UNLINK_ADDRESS = 'unlink1qqfy4lav3t0f9uk5z7t6vjn2qrtyfm6gfncxu4tv3d3s56ns2vzelmtjwce7f99ynjc4a8wunafpeuv4ueh0z39au8k6d806h853x9rjcfzc8j';
 const USDC_TOKEN = '0xd9e515b65caa28f99581632d0cf78d62e7d3a2fd'; // Sepolia USDC
@@ -27,7 +23,7 @@ export default function Home() {
     try {
       setLoading(true);
       setStatus('Initializing private account...');
-      const client = await getUnlinkClient(window.ethereum, primaryWallet.address);
+      const client = await getUnlinkClient((window as any).ethereum, primaryWallet.address);
       const { balances } = await client.getBalances();
       const usdc = balances.find((b: any) => b.token === USDC_TOKEN);
       setBalance(usdc ? (Number(usdc.amount) / 1e18).toFixed(2) : '0.00');
@@ -45,7 +41,7 @@ export default function Home() {
     try {
       setLoading(true);
       setStatus(`Initiating private purchase of ${coffeeName}...`);
-      const client = await getUnlinkClient(window.ethereum, primaryWallet.address);
+      const client = await getUnlinkClient((window as any).ethereum, primaryWallet.address);
       const tx = await client.transfer({
         recipientAddress: SELLER_UNLINK_ADDRESS,
         token: USDC_TOKEN,
